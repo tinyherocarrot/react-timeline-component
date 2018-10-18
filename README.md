@@ -25,8 +25,6 @@ Run `npm install`, and then `npm start` to view in your browser.
 
 * vertical: `boolean`. Event titles are hidden as tooltips. Default: `false`.
 
-### Optional Props
-
 
 ## Design Decisions
 

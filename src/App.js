@@ -8,7 +8,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <Timeline width={300} height={600}/>
+          <Timeline width={400} height={800}/>
         </header>
       </div>
     )

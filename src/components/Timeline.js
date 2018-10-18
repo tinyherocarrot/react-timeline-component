@@ -4,8 +4,8 @@ import "./Timeline.css"
 
 // d3
 import {
-  scaleLinear as d3ScaleLinear,
-  scaleTime as d3ScaleTime
+  scaleTime as d3ScaleTime,
+  scaleBand as d3ScaleBand
 } from "d3-scale"
 import { axisTop as d3AxisTop, axisLeft as d3AxisLeft } from "d3-axis"
 import { select as d3Select } from "d3-selection"
@@ -49,9 +49,12 @@ class Timeline extends Component {
     // "X" domain should go from 0 to the length of our data.
     // "X" range should be ... size of the container?
     // TODO: Add colors here.
-    const xScale = d3ScaleLinear()
-      .domain([0, data.length])
+    const xScale = d3ScaleBand()
+      // .domain([0, data.length])
       .range([0, width])
+      .round(true)
+      .padding(0.3)
+      .domain(data.map((d,i) => i))
 
     // "Y" domain should go from the earliest start date to the latest end date in our data.
     // "Y" range should be ... size of the container?
@@ -61,15 +64,19 @@ class Timeline extends Component {
 
     // Functions for selecting the scaled x and y values, and height of our bars
     const selectScaledX = d => xScale(data.indexOf(d))
-    const selectScaledY = d => (height - yScale(new Date(d.start)))
+    const selectScaledY = d => Math.floor(height - yScale(new Date(d.start)))-5 //hacky
     const selectScaledHeight = d => {
-      const duration = d3TimeDay.count(new Date(d.start), new Date(d.end))
+      const duration = d3TimeDay.count(new Date(d.start), new Date(d.end)) + 1
       const minDateCopy = new Date(minDate.valueOf());
       minDateCopy.setDate(minDateCopy.getDate() + duration)
-      return (height - yScale(minDateCopy))
+      return (height - Math.floor(yScale(minDateCopy)))
     }
-
-    console.log(d3TimeDay.count(new Date(data[0].start), new Date(data[0].end)))
+    const selectScaledWidth = d => {
+      // const duration = d3TimeDay.count(new Date(d.start), new Date(d.end))
+      // const minDateCopy = new Date(minDate.valueOf());
+      // minDateCopy.setDate(minDateCopy.getDate() + duration)
+      // return (height - yScale(minDateCopy))
+    }
 
     const xAxis = d3AxisTop(xScale)
     // .scale(xScale)
@@ -77,39 +84,45 @@ class Timeline extends Component {
     // Set as many "y" ticks as there are enumerated days in the data.
     const yAxis = d3AxisLeft(yScale)
       // .scale(yScale)
-
+    console.log(d3TimeDay.range(minDate, maxDate, 1))
     // Add horizontal grid lines
     const gridlines = yAxis
-      .ticks(d3TimeDay.count(minDate, maxDate))
+      .tickValues(d3TimeDay.range(minDate, maxDate, 1))
       .tickSize(-width)
       .tickFormat("")
 
     // Map data to rectangles
-    const bars = data.map(d => ({
+    const swatch = ["#914AED", "#ED314A", "#3276DC", "#FFD66E", "#00D66F", "#30CEF2"]
+    const bars = data.map((d, i) => ({
       x: selectScaledX(d),
       y: selectScaledY(d),
       height: selectScaledHeight(d),
-      // fill: ,
+      width: xScale.bandwidth(),
+      fill: swatch[i % swatch.length],
       name: d.name
     }))
+    
 
     return (
-      <svg className="container" height={height} width={width}>
-        <div className="tooltip" />
-        <g className="xAxis" ref={node => d3Select(node).call(xAxis)} />
-        <g className="yAxis" ref={node => d3Select(node).call(yAxis)} />
-        <g className="grid" ref={node => d3Select(node).call(gridlines)} />
+      <svg className="timeline__container" height={height} width={width}>
+        <div className="timeline__tooltip" />
+        <g className="timeline__axis--x" ref={node => d3Select(node).call(xAxis)} />
+        <g className="timeline__axis--y" ref={node => d3Select(node).call(yAxis)} />
+        <g className="timeline__grid" ref={node => d3Select(node).call(gridlines)} />
 
-        <g className="bars">
+        <g className="timeline__bars">
           {bars.map(bar => (
             <rect
-              width="20"
+              className="timeline__bar"
               x={bar.x}
               y={bar.y}
               height={bar.height}
+              width={bar.width}
               fill={bar.fill}
               key={`${bar.x},${bar.y}`}
               name={bar.name}
+              rx="10"
+              ry="10"
             />
           ))}
         </g>

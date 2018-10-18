@@ -1,0 +1,11 @@
+.container {
+    border: 1px solid lightgrey
+}
+
+.xAxis line, .yAxis path{
+    stroke: pink;
+}
+
+.grid line {
+    stroke: #F6F6F6;
+}

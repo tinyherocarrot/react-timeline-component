@@ -61,8 +61,15 @@ class Timeline extends Component {
 
     // Functions for selecting the scaled x and y values, and height of our bars
     const selectScaledX = d => xScale(data.indexOf(d))
-    const selectScaledY = d => yScale(new Date(d.start))
-    const selectScaledHeight = d => yScale(d3TimeDay.count(new Date(d.start), new Date(d.end)))
+    const selectScaledY = d => (height - yScale(new Date(d.start)))
+    const selectScaledHeight = d => {
+      const duration = d3TimeDay.count(new Date(d.start), new Date(d.end))
+      const minDateCopy = new Date(minDate.valueOf());
+      minDateCopy.setDate(minDateCopy.getDate() + duration)
+      return (height - yScale(minDateCopy))
+    }
+
+    console.log(d3TimeDay.count(new Date(data[0].start), new Date(data[0].end)))
 
     const xAxis = d3AxisTop(xScale)
     // .scale(xScale)
@@ -88,6 +95,7 @@ class Timeline extends Component {
 
     return (
       <svg className="container" height={height} width={width}>
+        <div className="tooltip" />
         <g className="xAxis" ref={node => d3Select(node).call(xAxis)} />
         <g className="yAxis" ref={node => d3Select(node).call(yAxis)} />
         <g className="grid" ref={node => d3Select(node).call(gridlines)} />

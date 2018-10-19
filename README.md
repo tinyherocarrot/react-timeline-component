@@ -55,6 +55,8 @@ None of the events have apparent relation, so I decided to put them in separate 
 
 ## Looking Forward
 
+* Some elements are not perfectly dynamic, have fixed "px" values. 
+
 ## Testing
 
 * I recently came across this [article](https://blog.kentcdodds.com/write-tests-not-too-many-mostly-integration-5e8c7fff591c) by Kent Dodds, a frontend engineer at PayPal. I wholeheartedly agree integration is the most "bang for your buck" type of testing 

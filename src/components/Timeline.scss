@@ -15,17 +15,17 @@
 
     &:hover {
       stroke: rgb(152, 152, 152);
-
+      
       & + text {
         color: rgb(152, 152, 152);
       }
     }
   }
   text {
-    transform: translate(50px, -5px);
+    transform: translate(50px, -6px);
     width: 30px;
     color: rgb(232, 232, 232);
-    text-anchor: start;
+    text-anchor: end;
   }
 }
 

@@ -8,6 +8,7 @@ import { axisTop as d3AxisTop, axisLeft as d3AxisLeft } from "d3-axis"
 import { select as d3Select } from "d3-selection"
 import { min as d3Min, max as d3Max } from "d3-array"
 import { timeDay as d3TimeDay } from "d3-time"
+import { timeFormat as d3TimeFormat } from "d3-time-format"
 
 import timelineItems from "../timelineItems"
 
@@ -64,7 +65,7 @@ class Timeline extends Component {
       // .domain([0, data.length])
       .range([0, width])
       .round(true)
-      .padding(0.3)
+      .padding(0.5)
       .domain(data.map((d, i) => i))
 
     // "Y" domain should go from the earliest start date to the latest end date in our data.
@@ -75,9 +76,12 @@ class Timeline extends Component {
 
     // Functions for selecting the scaled x and y values, and height of our bars
     const selectScaledX = d => xScale(data.indexOf(d))
-    const selectScaledY = d =>
-      Math.floor(yScale(new Date(d.start))) + 5 //FIXME: hacky fixed "scoot" of 5px
+    const selectScaledY = d => {
+      const startDate = new Date(d.start)
+      startDate.setDate(startDate.getDate() - 1)
+      return Math.floor(yScale(startDate)) + 5 //FIXME: hacky fixed "scoot" of 5px
       // Math.floor(height - yScale(new Date(d.start))) - 5 //FIXME: hacky fixed "scoot" of 5px
+    }
     const selectScaledHeight = d => {
       const duration = d3TimeDay.count(new Date(d.start), new Date(d.end)) + 1
       const minDateCopy = new Date(minDate.valueOf())
@@ -86,18 +90,20 @@ class Timeline extends Component {
       // return height - Math.floor(yScale(minDateCopy))
     }
 
-    const xAxis = d3AxisTop(xScale).ticks(3)
-    // .scale(xScale)
+    const xAxis = d3AxisTop(xScale)
+      .tickSize(0)
+      .tickValues([])
 
     // Set as many "y" ticks as there are enumerated days in the data.
     const yAxis = d3AxisLeft(yScale)
-    // .scale(yScale)
 
     // Add horizontal grid lines
     const dateArr = d3TimeDay.range(minDate, maxDate, 1)
     // const formattedDateArr = dateArr.map(d => d.toISOString().slice(0,10))
-    yAxis.tickValues(dateArr).tickSize(-width)
-    // .tickFormat("")
+    yAxis
+      .tickValues(dateArr)
+      .tickSize(-width)
+      .tickFormat(d3TimeFormat("%Y-%m-%d"))
 
     // Map data to rectangles
     const swatch = [
@@ -132,29 +138,34 @@ class Timeline extends Component {
           width={width}
           overflow="scroll">
           <g
-            className="timeline__axis--x"
-            ref={node => d3Select(node).call(xAxis)}
-          />
-          <g
-            className="timeline__axis--y"
-            ref={node => d3Select(node).call(yAxis)}
-          />
-          <g className="timeline__bars">
-            {bars.map(bar => (
-              <rect
-                onMouseOver={e => this.handleBarHover(e)}
-                className="timeline__bar"
-                x={bar.x}
-                y={bar.y}
-                height={bar.height}
-                width={bar.width}
-                fill={bar.fill}
-                key={`${bar.x},${bar.y}`}
-                name={bar.name}
-                rx="10" // this should be dynamic
-                ry="10" // this should be dynamic
-              />
-            ))}
+            style={{
+              transform: `translate(${margin.left}px,${margin.top}px)`
+            }}>
+            <g
+              className="timeline__axis--x"
+              ref={node => d3Select(node).call(xAxis)}
+            />
+            <g
+              className="timeline__axis--y"
+              ref={node => d3Select(node).call(yAxis)}
+            />
+            <g className="timeline__bars">
+              {bars.map(bar => (
+                <rect
+                  onMouseOver={e => this.handleBarHover(e)}
+                  className="timeline__bar"
+                  x={bar.x}
+                  y={bar.y}
+                  height={bar.height}
+                  width={bar.width}
+                  fill={bar.fill}
+                  key={`${bar.x},${bar.y}`}
+                  name={bar.name}
+                  rx="6" // this should be dynamic
+                  ry="6" // this should be dynamic
+                />
+              ))}
+            </g>
           </g>
         </svg>
       </>

@@ -1,4 +1,4 @@
-# Reusable Timeline Component
+# React Timeline Component
 
 This is a React component for visualizing events on a timeline. 
 
@@ -50,12 +50,20 @@ None of the events have apparent relation, so I decided to put them in separate 
 * Hide D3 logic behind abstraction layer
 * Responsive, should look good as a main body widget, or as sidebar widget
 
-
 ## What I Like
+
+* Editing capabilities! Pretty slick
+* Intuitive
 
 ## Looking Forward
 
-* Some elements are not perfectly dynamic, have fixed "px" values. 
+* Bars are still slightly cut-off at bottom
+* Bars should be darkening on hover
+* Left padding should push bars off of date labels
+* Component overflow should be X and Y scrollable
+* Tooltip should disappear with 2 sec timeout
+* BUG: if name is empty, tooltip is impossible to edit
+* Hover on a day highlights row, and intersecting events
 
 ## Testing
 

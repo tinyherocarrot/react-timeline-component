@@ -78,7 +78,7 @@ export default InlineEdit
 
 const Container = styled.div`
   visibility: ${props => (props.value !== "" ? "visible" : "hidden")};
-  height: auto;
+  min-height: 1em;
   width: ${props => props.width};
   font-size: 12px;
 `

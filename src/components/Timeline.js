@@ -53,7 +53,7 @@ class Timeline extends Component {
     selectItem(+hoveredId)
   }
   handleHoverOff = () => {
-    const {selectItem} = this.props
+    const { selectItem } = this.props
     selectItem("")
   }
   handleInputChange = val => {
@@ -63,9 +63,8 @@ class Timeline extends Component {
   }
 
   render() {
-    let { items } = this.props
-    let { height, width } = this.props
-    const margin = { top: 40, right: 0, bottom: 40, left: 40 }
+    let { height, width, items } = this.props
+    const margin = { top: 15, right: 0, bottom: 40, left: 10 }
     width = +width - margin.right - margin.left
     height = +height - margin.top - margin.bottom
 
@@ -140,17 +139,16 @@ class Timeline extends Component {
     }))
 
     const { clientX, clientY } = this.state
-    const {editingId} = this.props
-    const toolText = editingId ? items.find(d => d.id === this.props.editingId).name : ""
+    const { editingId } = this.props
+    const toolText = editingId
+      ? items.find(d => d.id === this.props.editingId).name
+      : ""
     return (
       <>
         <div
           className="timeline__tooltip"
           style={{ left: clientX, top: clientY }}>
-          <InlineEdit
-            onChange={this.handleInputChange}
-            value={toolText}
-          />
+          <InlineEdit onChange={this.handleInputChange} value={toolText} />
         </div>
         <svg
           className="timeline__container"
@@ -183,8 +181,8 @@ class Timeline extends Component {
                   fill={bar.fill}
                   key={`${bar.x},${bar.y}`}
                   name={bar.name}
-                  rx="6" // this should be dynamic
-                  ry="6" // this should be dynamic
+                  rx={bar.width / 2} // this should be dynamic
+                  ry={bar.width / 2} // this should be dynamic
                 />
               ))}
             </g>
@@ -196,7 +194,6 @@ class Timeline extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state.inlineEditReducer.items, state.inlineEditReducer.editingId)
   return {
     items: state.inlineEditReducer.items,
     editingId: state.inlineEditReducer.editingId
@@ -204,10 +201,13 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    selectItem: (id) => dispatch(select(id)),
+    selectItem: id => dispatch(select(id)),
     editItem: (id, val) => dispatch(edit(id, val)),
     loadData: data => dispatch(load(data))
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Timeline)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Timeline)

@@ -1,5 +1,6 @@
 import React, { Component } from "react"
-import InlineEdit from "./components/InlineEdit.js"
+import styled from "styled-components"
+
 import Timeline from "./components/Timeline"
 
 import timelineItems from "./timelineItems"
@@ -8,12 +9,22 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header" style={{textAlign: "center", paddingTop: "20px"}}>
-          <Timeline data={timelineItems} width={400} height={800}/>
-        </header>
+        <Page>
+          <h1>Your Timeline</h1>
+          <Timeline data={timelineItems} width={400} height={800} />
+        </Page>
       </div>
     )
   }
 }
 
 export default App
+
+const Page = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 20px;
+`

@@ -1,3 +1,6 @@
+$color-grey: rgb(152, 152, 152);
+$color-lightgrey: #e8e8e8;
+
 .timeline__container {
   background: #ffffff;
   box-shadow: 0 3px 8px 1px rgba(116, 116, 116, 0.5);
@@ -9,23 +12,23 @@
 
 .tick {
   line {
-    stroke: #f6f6f6;
+    stroke: $color-lightgrey;
     stroke-width: 1px;
     shape-rendering: crispEdges;
-
-    &:hover {
-      stroke: rgb(152, 152, 152);
-      
-      & + text {
-        color: rgb(152, 152, 152);
-      }
-    }
   }
   text {
-    transform: translate(50px, -6px);
+    transform: translate(60px, -7px);
     width: 30px;
-    color: rgb(232, 232, 232);
+    color: $color-grey;
     text-anchor: end;
+
+    &:hover {
+      stroke: $color-grey;
+      cursor: default;
+      & + text {
+        color: $color-grey;
+      }
+    }
   }
 }
 

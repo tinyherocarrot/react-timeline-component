@@ -64,7 +64,7 @@ class Timeline extends Component {
 
   render() {
     let { height, width, items } = this.props
-    const margin = { top: 15, right: 0, bottom: 40, left: 10 }
+    const margin = { top: 15, right: 0, bottom: 40, left: 0 }
     width = +width - margin.right - margin.left
     height = +height - margin.top - margin.bottom
 
@@ -147,7 +147,11 @@ class Timeline extends Component {
       <>
         <div
           className="timeline__tooltip"
-          style={{ left: clientX, top: clientY }}>
+          style={{
+            left: clientX,
+            top: clientY,
+            display: clientX && clientY ? "block" : "none"
+          }}>
           <InlineEdit onChange={this.handleInputChange} value={toolText} />
         </div>
         <svg

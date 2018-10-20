@@ -10,7 +10,10 @@ import { min as d3Min, max as d3Max } from "d3-array"
 import { timeDay as d3TimeDay } from "d3-time"
 import { timeFormat as d3TimeFormat } from "d3-time-format"
 
-import timelineItems from "../timelineItems"
+import { connect } from "react-redux"
+import { edit, load, select } from "../redux/inlineEdit"
+
+import InlineEdit from "./InlineEdit"
 
 /**
  * If data is passed in by redux,
@@ -27,11 +30,7 @@ class Timeline extends Component {
         end: PropTypes.string,
         name: PropTypes.string
       })
-    ).isRequired
-  }
-
-  static defaultProps = {
-    data: timelineItems
+    )
   }
 
   state = {
@@ -40,33 +39,50 @@ class Timeline extends Component {
     clientY: 0
   }
 
-  handleBarHover = e => {
-    const toolText = e.target.getAttribute("name")
+  componentDidMount() {
+    const { data, loadData } = this.props
+    loadData(data)
+  }
+
+  handleHoverOn = e => {
     const { clientX, clientY } = e
-    this.setState({ clientX, clientY, toolText })
+    this.setState({ clientX, clientY })
+    const { selectItem } = this.props
+    const hoveredId = e.target.getAttribute("id")
+    console.log(hoveredId)
+    selectItem(+hoveredId)
+  }
+  handleHoverOff = () => {
+    const {selectItem} = this.props
+    selectItem("")
+  }
+  handleInputChange = val => {
+    const { editingId, editItem } = this.props
+    // console.log(61", editingId, val)
+    editItem(editingId, val)
   }
 
   render() {
-    let { data, height, width } = this.props
+    let { items } = this.props
+    let { height, width } = this.props
     const margin = { top: 40, right: 0, bottom: 40, left: 40 }
     width = +width - margin.right - margin.left
     height = +height - margin.top - margin.bottom
-    console.log(width, height)
 
-    const minDate = new Date(d3Min(data, d => d.start))
-    const maxDate = new Date(d3Max(data, d => d.end))
+    const minDate = new Date(d3Min(items, d => d.start))
+    const maxDate = new Date(d3Max(items, d => d.end))
 
     // Sort data by start date
-    data = data.sort((a, b) => new Date(a.start) - new Date(b.start))
+    items = items.sort((a, b) => new Date(a.start) - new Date(b.start))
 
     // "X" domain should go from 0 to the length of our data.
     // "X" range should be ... size of the container?
     const xScale = d3ScaleBand()
-      // .domain([0, data.length])
+      // .domain([0, items.length])
       .range([0, width])
       .round(true)
       .padding(0.5)
-      .domain(data.map((d, i) => i))
+      .domain(items.map((d, i) => i))
 
     // "Y" domain should go from the earliest start date to the latest end date in our data.
     // "Y" range should be ... size of the container?
@@ -75,7 +91,7 @@ class Timeline extends Component {
       .range([0, height])
 
     // Functions for selecting the scaled x and y values, and height of our bars
-    const selectScaledX = d => xScale(data.indexOf(d))
+    const selectScaledX = d => xScale(items.indexOf(d))
     const selectScaledY = d => {
       const startDate = new Date(d.start)
       startDate.setDate(startDate.getDate() - 1)
@@ -99,7 +115,6 @@ class Timeline extends Component {
 
     // Add horizontal grid lines
     const dateArr = d3TimeDay.range(minDate, maxDate, 1)
-    // const formattedDateArr = dateArr.map(d => d.toISOString().slice(0,10))
     yAxis
       .tickValues(dateArr)
       .tickSize(-width)
@@ -114,23 +129,28 @@ class Timeline extends Component {
       "#00D66F",
       "#30CEF2"
     ]
-    const bars = data.map((d, i) => ({
+    const bars = items.map((d, i) => ({
       x: selectScaledX(d),
       y: selectScaledY(d),
       height: selectScaledHeight(d),
       width: xScale.bandwidth(),
       fill: swatch[i % swatch.length],
-      name: d.name
+      name: d.name,
+      id: d.id
     }))
 
-    const { clientX, clientY, toolText } = this.state
-
+    const { clientX, clientY } = this.state
+    const {editingId} = this.props
+    const toolText = editingId ? items.find(d => d.id === this.props.editingId).name : ""
     return (
       <>
         <div
           className="timeline__tooltip"
           style={{ left: clientX, top: clientY }}>
-          {toolText}
+          <InlineEdit
+            onChange={this.handleInputChange}
+            value={toolText}
+          />
         </div>
         <svg
           className="timeline__container"
@@ -152,8 +172,10 @@ class Timeline extends Component {
             <g className="timeline__bars">
               {bars.map(bar => (
                 <rect
-                  onMouseOver={e => this.handleBarHover(e)}
                   className="timeline__bar"
+                  id={bar.id}
+                  onMouseEnter={e => this.handleHoverOn(e)}
+                  // onMouseLeave={this.handleHoverOff}
                   x={bar.x}
                   y={bar.y}
                   height={bar.height}
@@ -173,4 +195,19 @@ class Timeline extends Component {
   }
 }
 
-export default Timeline
+const mapStateToProps = state => {
+  console.log(state.inlineEditReducer.items, state.inlineEditReducer.editingId)
+  return {
+    items: state.inlineEditReducer.items,
+    editingId: state.inlineEditReducer.editingId
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    selectItem: (id) => dispatch(select(id)),
+    editItem: (id, val) => dispatch(edit(id, val)),
+    loadData: data => dispatch(load(data))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Timeline)

@@ -61,3 +61,7 @@ None of the events have apparent relation, so I decided to put them in separate 
 
 * I recently came across this [article](https://blog.kentcdodds.com/write-tests-not-too-many-mostly-integration-5e8c7fff591c) by Kent Dodds, a frontend engineer at PayPal. I wholeheartedly agree integration is the most "bang for your buck" type of testing 
 * Test events fetch
+
+## Links
+
+* [Trello](https://trello.com/b/Lmpu9AS6/react-timeline)

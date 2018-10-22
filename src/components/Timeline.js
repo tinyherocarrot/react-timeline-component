@@ -1,6 +1,13 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
+
+// Internal modules
 import "./Timeline.scss"
+import InlineEdit from "./InlineEdit"
+
+// Redux
+import { connect } from "react-redux"
+import { edit, load, select } from "../redux/inlineEdit"
 
 // d3
 import { scaleTime as d3ScaleTime, scaleBand as d3ScaleBand } from "d3-scale"
@@ -9,17 +16,6 @@ import { select as d3Select } from "d3-selection"
 import { min as d3Min, max as d3Max } from "d3-array"
 import { timeDay as d3TimeDay } from "d3-time"
 import { timeFormat as d3TimeFormat } from "d3-time-format"
-
-import { connect } from "react-redux"
-import { edit, load, select } from "../redux/inlineEdit"
-
-import InlineEdit from "./InlineEdit"
-
-/**
- * If data is passed in by redux,
- * then when data (dates) updates,
- * whole component should update.
- */
 
 class Timeline extends Component {
   static propTypes = {
@@ -34,7 +30,6 @@ class Timeline extends Component {
   }
 
   state = {
-    toolText: "",
     clientX: 0,
     clientY: 0
   }
@@ -48,17 +43,18 @@ class Timeline extends Component {
     const { clientX, clientY } = e
     this.setState({ clientX, clientY })
     const { selectItem } = this.props
-    const hoveredId = e.target.getAttribute("id")
-    console.log(hoveredId)
-    selectItem(+hoveredId)
+    const hoveredId = +e.target.getAttribute("id")
+    selectItem(hoveredId)
   }
-  handleHoverOff = () => {
-    const { selectItem } = this.props
-    selectItem("")
-  }
+
+  // FIXME: this handler should exclude the tooltip
+  // handleHoverOff = () => {
+  //   const { selectItem } = this.props
+  //   setTimeout(() => selectItem(""), 2000)
+  // }
+
   handleInputChange = val => {
     const { editingId, editItem } = this.props
-    // console.log(61", editingId, val)
     editItem(editingId, val)
   }
 
@@ -75,16 +71,15 @@ class Timeline extends Component {
     items = items.sort((a, b) => new Date(a.start) - new Date(b.start))
 
     // "X" domain should go from 0 to the length of our data.
-    // "X" range should be ... size of the container?
+    // "Y" range should be 0 to width of the container
     const xScale = d3ScaleBand()
-      // .domain([0, items.length])
       .range([0, width])
       .round(true)
       .padding(0.5)
       .domain(items.map((d, i) => i))
 
     // "Y" domain should go from the earliest start date to the latest end date in our data.
-    // "Y" range should be ... size of the container?
+    // "Y" range should be 0 to height of the container
     const yScale = d3ScaleTime()
       .domain([minDate, maxDate])
       .range([0, height])
@@ -95,24 +90,21 @@ class Timeline extends Component {
       const startDate = new Date(d.start)
       startDate.setDate(startDate.getDate() - 1)
       return Math.floor(yScale(startDate)) + 5 //FIXME: hacky fixed "scoot" of 5px
-      // Math.floor(height - yScale(new Date(d.start))) - 5 //FIXME: hacky fixed "scoot" of 5px
     }
     const selectScaledHeight = d => {
       const duration = d3TimeDay.count(new Date(d.start), new Date(d.end)) + 1
       const minDateCopy = new Date(minDate.valueOf())
       minDateCopy.setDate(minDateCopy.getDate() + duration)
       return Math.floor(yScale(minDateCopy)) - Math.floor(yScale(minDate))
-      // return height - Math.floor(yScale(minDateCopy))
     }
 
+    //  Create xAxis and yAxis.
+    //  No ticks on xAxis.
+    //  Ticks on yAxis enumerate elapsed dates.
     const xAxis = d3AxisTop(xScale)
       .tickSize(0)
       .tickValues([])
-
-    // Set as many "y" ticks as there are enumerated days in the data.
     const yAxis = d3AxisLeft(yScale)
-
-    // Add horizontal grid lines
     const dateArr = d3TimeDay.range(minDate, maxDate, 1)
     yAxis
       .tickValues(dateArr)
@@ -185,8 +177,8 @@ class Timeline extends Component {
                   fill={bar.fill}
                   key={`${bar.x},${bar.y}`}
                   name={bar.name}
-                  rx={bar.width / 2} // this should be dynamic
-                  ry={bar.width / 2} // this should be dynamic
+                  rx={bar.width / 2}
+                  ry={bar.width / 2}
                 />
               ))}
             </g>

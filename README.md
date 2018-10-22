@@ -3,7 +3,7 @@
 This is a React component for visualizing events on a timeline. 
 
 ## Installation
-Run `npm install`, and then `npm start` to view in your browser. 
+Run `npm install`, and then `npm start` to view in browser. 
 
 ## Usage
 
@@ -54,8 +54,9 @@ None of the events have apparent relation, so I decided to put them in separate 
 ## What I Like
 
 * Editing capabilities
-* [Ducks](https://github.com/erikras/ducks-modular-redux)(Redux reducer bundles) for Redux code. Much better than traversing three or more different files for one action!
+* [Ducks](https://github.com/erikras/ducks-modular-redux) (Redux reducer bundles) for Redux code. Much better than traversing three or more different files for one action!
 * D3 for calculation ONLY, React for DOM manipulation. 
+* SCSS for svg styling, styled-components for other styling.
 
 ## Looking Forward
 
@@ -64,7 +65,7 @@ None of the events have apparent relation, so I decided to put them in separate 
 * Bars should be darkening on hover
 * Left padding should push bars off of date labels
 * Component overflow should be X and Y scrollable
-* Tooltip should disappear with 2 sec timeout
+* Tooltip should close on mouseoff with a 2 sec timeout
 * BUG: if name is empty, tooltip is impossible to edit
 * Hover on a day highlights row, and intersecting events
 * D3 is a library with a steep learning curve! I will have to keep practicing

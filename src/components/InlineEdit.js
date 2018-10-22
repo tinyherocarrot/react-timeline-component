@@ -4,68 +4,66 @@ import styled from "styled-components"
 
 class InlineEdit extends Component {
   static propTypes = {
-    onChange: PropTypes.func.isRequired, // to be called onBlur
+    onChange: PropTypes.func.isRequired,
     value: PropTypes.string
   }
+
   static defaultProps = {
     value: ""
   }
+
   state = {
     editing: false,
     value: this.props.value // initialize to given value
   }
-  componentDidMount() {
-    // const { value } = this.props
-    // this.setState({ value })
-  }
+
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
       const { value } = this.props
       this.setState({ editing: false, value })
     }
   }
-  handleBlur = () => {
-    this.props.onChange(this.state.value)
-    this.setState({ editing: false })
-  }
+
   handleFocus = () => {
     this.setState({ editing: true })
   }
+
   handleInputChange = e => {
     const { onChange } = this.props
     const { value } = e.target
-    if (e.key === "Enter") {
-      onChange(this.state.value) // only call this onBlur, Enter
-      return this.setState({ editing: false })
-    }
     this.setState({ value })
   }
+
+  saveChange = () => {
+    const { onChange } = this.props
+    onChange(this.state.value)
+    return this.setState({ editing: false })
+  }
+
   handleKeyPress = e => {
     const { onChange } = this.props
     if (e.key === "Enter") {
-      onChange(this.state.value) // only call this onBlur, Enter
-      return this.setState({ editing: false })
+      this.saveChange()
     }
   }
+
   render() {
     const { editing } = this.state
     const { value } = this.state
-    const width = (value.length) * 7 + "px"
+    const width = value.length * 7 + "px"
     return (
       <Container value={value} width={width}>
         {editing ? (
           <Input
             value={value}
-            onBlur={this.handleBlur}
+            onBlur={this.saveChange}
             width={width}
             onChange={e => this.handleInputChange(e)}
-            onKeyPress={this.handleKeyPress}
+            onKeyPress={e => this.handleKeyPress(e)}
             autoFocus
           />
         ) : (
-          <Text
-            width={width}
-            onClick={this.handleFocus}>
+          <Text width={width} onClick={this.handleFocus}>
             {value}
           </Text>
         )}
@@ -75,6 +73,8 @@ class InlineEdit extends Component {
 }
 
 export default InlineEdit
+
+// - - - - - - - - - - - - - - - 
 
 const Container = styled.div`
   visibility: ${props => (props.value !== "" ? "visible" : "hidden")};

@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 import styled from "styled-components"
 
+// Internal Modules
 import Timeline from "./components/Timeline"
-
 import timelineItems from "./timelineItems"
 
 class App extends Component {
@@ -19,6 +19,8 @@ class App extends Component {
 }
 
 export default App
+
+// - - - - - - - - - - - - - 
 
 const Page = styled.div`
   display: flex;

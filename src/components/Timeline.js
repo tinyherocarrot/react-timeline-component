@@ -26,7 +26,14 @@ class Timeline extends Component {
         end: PropTypes.string,
         name: PropTypes.string
       })
-    )
+    ),
+    width: PropTypes.number,
+    height: PropTypes.number
+  }
+
+  static defaultProps = {
+    width: 300,
+    height: 600
   }
 
   state = {

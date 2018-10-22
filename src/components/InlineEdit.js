@@ -18,8 +18,8 @@ class InlineEdit extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      const { value } = this.props
+    const { value } = this.props
+    if (prevProps.value !== value) {
       this.setState({ editing: false, value })
     }
   }
@@ -29,7 +29,6 @@ class InlineEdit extends Component {
   }
 
   handleInputChange = e => {
-    const { onChange } = this.props
     const { value } = e.target
     this.setState({ value })
   }
@@ -41,7 +40,6 @@ class InlineEdit extends Component {
   }
 
   handleKeyPress = e => {
-    const { onChange } = this.props
     if (e.key === "Enter") {
       this.saveChange()
     }
@@ -74,7 +72,7 @@ class InlineEdit extends Component {
 
 export default InlineEdit
 
-// - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - -
 
 const Container = styled.div`
   visibility: ${props => (props.value !== "" ? "visible" : "hidden")};

@@ -27,7 +27,7 @@ Run `npm install`, and then `npm start` to view in browser.
 * width: ```number```. Default value is `300`
 * height: ```number```. Default value is `600`
 
-## Design Decisions
+## Motivation
 
 Most timelines display only isolated events on the continuum, whereas I want to show many potentially overlapping events, also showing with their durations. The closest logic fit was a [package tracking timeline](https://cdn.dribbble.com/users/187214/screenshots/5288770/myh-messages_4x.png). What I like about this timeline design is the easy-to-follow representation of elapsed time. For instance, the package left on Oct 4, arrived at a shipping hub on Oct 8, where it stayed until Oct 10. 
 
@@ -36,7 +36,7 @@ Most timelines display only isolated events on the continuum, whereas I want to 
 None of the event items have apparent relation, so I decided to put them in separate "lanes", order them by start date, and use a diverse swatch to visual distinguish them. At the cost of compactness, this arrangment helps me handle long event names, and creates a logical hierarchy of events.
 
 
-### Defined Requirements
+### Requirements
 
 * Visually compact
 * Display event title
@@ -45,12 +45,10 @@ None of the event items have apparent relation, so I decided to put them in sepa
 * Inline editable titles (React)
 * Dragging events to edit (d3.js)
 
-### Additional requirements I set for myself
-
 * Easily reusable by other developers
 * Responsive, should look good as a main body widget, or as sidebar widget
 
-## What I Like
+## Project Takeaways
 
 * [Ducks](https://github.com/erikras/ducks-modular-redux) (Redux reducer bundles) for Redux code. Much better than traversing three or more different files for one action!
 * Separation of functionality: D3 for calculation ONLY, React for DOM manipulation. 

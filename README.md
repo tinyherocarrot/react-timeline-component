@@ -29,9 +29,7 @@ Run `npm install`, and then `npm start` to view in browser.
 
 ## Design Decisions
 
-Browsing 'timelines' for inspiration on Dribbble, I realized that none of them quite fit my requirements, and thus I was able to hone in on the crucial requirements of the timeline component. 
-
-Most timelines display only isolated events on the continuum, whereas I needed to show many events with their durations, potentially overlappin. The closest logic fit was a [package tracking timeline](https://cdn.dribbble.com/users/187214/screenshots/5288770/myh-messages_4x.png). What I like about this timeline design is the easy-to-follow representation of elapsed time. For instance, the package left on Oct 4, arrived at a shipping hub on Oct 8, where it stayed until Oct 10. 
+Most timelines display only isolated events on the continuum, whereas I want to show many potentially overlapping events, also showing with their durations. The closest logic fit was a [package tracking timeline](https://cdn.dribbble.com/users/187214/screenshots/5288770/myh-messages_4x.png). What I like about this timeline design is the easy-to-follow representation of elapsed time. For instance, the package left on Oct 4, arrived at a shipping hub on Oct 8, where it stayed until Oct 10. 
 
 ![timeline__sketch](./public/timeline__sketch.png "Timeline Mock-up")
 
